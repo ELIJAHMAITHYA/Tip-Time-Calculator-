@@ -68,7 +68,7 @@ fun TipTimeLayout() {
     val rate = rateinput.toDoubleOrNull() ?: 0.0
     var peoplenumber by remember { mutableStateOf("") }
     val people = peoplenumber.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount, rate, people)
+    val tip = calculateTip(amount, rate, people, roundUp )
     Column(
         modifier = Modifier.padding(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,20 +94,20 @@ fun TipTimeLayout() {
         )
         numberPeople(
             people = peoplenumber, onValueChange = { peoplenumber = it }, modifier = Modifier
-                .padding(bottom = 3.dp)
+                .padding(bottom = 32.dp)
                 .fillMaxWidth()
+        )
+        Text(
+            text = stringResource(R.string.tip_amount, tip),
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier.padding(bottom = 32.dp)
         )
         roundUp(
             roundUp = roundUp,
             roundUpChanged = { roundUp = it },
-        //    modifier = Modifier.padding(bottom = 32.dp)
+             modifier = Modifier.padding(bottom = 32.dp)
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = stringResource(R.string.tip_amount, tip),
-            style = MaterialTheme.typography.displaySmall
-        )
-        Spacer(modifier = Modifier.height(150.dp))
+      //  Spacer(modifier = Modifier.height(150.dp))
     }
 }
 
@@ -183,22 +183,25 @@ fun roundUp (modifier: Modifier= Modifier,
              roundUpChanged : (Boolean)-> Unit
 ){
     Row(modifier = Modifier
-        .fillMaxSize(),
+        .fillMaxSize()
+        .height(16.dp),
       //  .size(48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = stringResource(id = R.string.round_up_tip))
         Switch(checked = roundUp, onCheckedChange = roundUpChanged,
         modifier = Modifier
-            .fillMaxSize()
+           .fillMaxSize()
             .wrapContentWidth(Alignment.End)
             )
 
 
     }
 }
-private fun calculateTip(amount: Double, tipPercentage: Double, nupeople: Double): String {
-    val tip = (tipPercentage / 100 * amount) / nupeople
+private fun calculateTip(amount: Double, tipPercentage: Double, nupeople: Double, roundUp: Boolean): String {
+    var tip = (tipPercentage / 100 * amount) / nupeople
+    if (roundUp)
+        tip = kotlin.math.ceil(tip)
     return NumberFormat.getCurrencyInstance().format(tip)
 }
 

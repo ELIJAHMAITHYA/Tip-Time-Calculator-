@@ -7,5 +7,5 @@
     <string name="percentage"> Enter the percentage Rate </string>
     <string name="people_number"> Enter the number of people</string>
     <string name="how_was_the_service">Tip Percentage</string>
-    <string name="round_up_tip">Round up tip?</string>
+    <string name="round_up_tip">Round up the tip?</string>
 </resources>
