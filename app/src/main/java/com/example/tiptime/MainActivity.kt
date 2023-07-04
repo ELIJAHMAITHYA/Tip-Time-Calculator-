@@ -9,14 +9,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -54,6 +58,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeLayout() {
+    var roundUp by remember {
+         mutableStateOf(false)
+    }
+
     var amountInput by remember { mutableStateOf("") }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     var rateinput by remember { mutableStateOf("") }
@@ -86,10 +94,15 @@ fun TipTimeLayout() {
         )
         numberPeople(
             people = peoplenumber, onValueChange = { peoplenumber = it }, modifier = Modifier
-                .padding(bottom = 32.dp)
+                .padding(bottom = 3.dp)
                 .fillMaxWidth()
         )
-
+        roundUp(
+            roundUp = roundUp,
+            roundUpChanged = { roundUp = it },
+        //    modifier = Modifier.padding(bottom = 32.dp)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
@@ -121,6 +134,7 @@ fun Percentage(
 
 @Composable
 fun EditNumberField(
+
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -153,14 +167,36 @@ fun numberPeople(
         },
         singleLine = true,
         label = { Text(stringResource(R.string.people_number)) },
+
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Done
         ),
+
         modifier = modifier
     )
 }
 
+@Composable
+fun roundUp (modifier: Modifier= Modifier,
+             roundUp: Boolean,
+             roundUpChanged : (Boolean)-> Unit
+){
+    Row(modifier = Modifier
+        .fillMaxSize(),
+      //  .size(48.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(id = R.string.round_up_tip))
+        Switch(checked = roundUp, onCheckedChange = roundUpChanged,
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentWidth(Alignment.End)
+            )
+
+
+    }
+}
 private fun calculateTip(amount: Double, tipPercentage: Double, nupeople: Double): String {
     val tip = (tipPercentage / 100 * amount) / nupeople
     return NumberFormat.getCurrencyInstance().format(tip)
